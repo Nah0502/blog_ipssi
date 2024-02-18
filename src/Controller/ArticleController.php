@@ -36,6 +36,7 @@ class ArticleController extends AbstractController
             $article->setDateCreation(new \DateTime());
             $entityManager->persist($article);
             $entityManager->flush();
+            $this->addFlash('success', 'Article est creer avec succes');
 
             return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
         }
