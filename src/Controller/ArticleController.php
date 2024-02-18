@@ -66,6 +66,8 @@ class ArticleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'Article est modifier avec succes');
+
             return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -81,6 +83,8 @@ class ArticleController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
             $entityManager->remove($article);
             $entityManager->flush();
+
+            $this->addFlash('success', 'Article est supprimer avec succes');
         }
 
         return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
@@ -92,6 +96,8 @@ class ArticleController extends AbstractController
             $article->setDateParution(new \DateTime());
             $article->setEtat("publie");
             $entityManager->flush();
+
+            $this->addFlash('success', 'Article est publier avec succes');
         }
 
         return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);

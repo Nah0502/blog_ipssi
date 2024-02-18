@@ -58,6 +58,8 @@ class CommentaireController extends AbstractController
                 $commentaire->setDatePublication(new \DateTime());
                 $entityManager->persist($commentaire);
                 $entityManager->flush();
+
+                $this->addFlash('success', 'Commentaire est creer avec succes');
     
                 return $this->redirectToRoute('app_commentaire_index', [], Response::HTTP_SEE_OTHER);
             }
@@ -85,6 +87,8 @@ class CommentaireController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'Commentaire est modifier avec succes');
+
             return $this->redirectToRoute('app_commentaire_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -100,6 +104,8 @@ class CommentaireController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$commentaire->getId(), $request->request->get('_token'))) {
             $entityManager->remove($commentaire);
             $entityManager->flush();
+
+            $this->addFlash('success', 'Commentaire est supprimer avec succes');
         }
 
         return $this->redirectToRoute('app_commentaire_index', [], Response::HTTP_SEE_OTHER);
