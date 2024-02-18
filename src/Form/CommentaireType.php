@@ -16,16 +16,6 @@ class CommentaireType extends AbstractType
     {
         $builder
             ->add('commentaire')
-            ->add('date_publication')
-            ->add('etat')
-            ->add('auteur', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
-            ])
-            ->add('article', EntityType::class, [
-                'class' => Article::class,
-                'choice_label' => 'id',
-            ])
         ;
     }
 

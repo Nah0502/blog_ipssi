@@ -8,10 +8,6 @@
     <table class="table">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ article.id }}</td>
-            </tr>
-            <tr>
                 <th>Titre</th>
                 <td>{{ article.titre }}</td>
             </tr>
@@ -20,24 +16,17 @@
                 <td>{{ article.contenu }}</td>
             </tr>
             <tr>
-                <th>Date_creation</th>
-                <td>{{ article.dateCreation ? article.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Etat</th>
-                <td>{{ article.etat }}</td>
-            </tr>
-            <tr>
-                <th>Date_parution</th>
-                <td>{{ article.dateParution ? article.dateParution|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Articles</th>
+                <th>Commentaires</th>
                 <td>
-                    <ul>
+                    <a href="{{ path('app_commentaire_new', {'id_article': article.id}) }}">Nouveau commentaire</a>
+                    
                         {% for commentaire in commentaires %}
                             <li>{{ commentaire.auteur.email }}</li>
-                            <li>{{ commentaire.commentaire }}</li>
+                             {{ commentaire.commentaire }}
+                             {% if is_granted('ROLE_ADMIN') or (app.user is not null and commentaire.auteur.id == app.user.id) %}
+                                {{ include('commentaire/_delete_form.html.twig') }}
+                                <a href="{{ path('app_commentaire_edit', {'id': commentaire.id}) }}">edit</a>
+                             {% endif %}
                         {% endfor %}
                     </ul>
                 </td>
@@ -45,9 +34,11 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_article_index') }}">back to list</a>
+    <a href="{{ path('homepage') }}">back to home</a>
+    {% if is_granted('ROLE_ADMIN') %}
 
-    <a href="{{ path('app_article_edit', {'id': article.id}) }}">edit</a>
+        <a href="{{ path('app_article_edit', {'id': article.id}) }}">edit</a>
 
-    {{ include('article/_delete_form.html.twig') }}
+        {{ include('article/_delete_form.html.twig') }}
+    {% endif %}
 {% endblock %}

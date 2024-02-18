@@ -33,9 +33,11 @@ security:
     access_control:
          - { path: ^/admin, roles: ROLE_ADMIN }
          - { path: /categorie/new, roles: ROLE_ADMIN }
+         - { path: /article/new, roles: ROLE_ADMIN }
          - { path: /categorie/edit, roles: ROLE_ADMIN }
-         - { path: /commentaire/edit, roles: ROLE_ADMIN }
          - { path: /article/edit, roles: ROLE_ADMIN }
+         - { path: /categorie/delete, roles: ROLE_ADMIN }
+         - { path: /article/delete, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

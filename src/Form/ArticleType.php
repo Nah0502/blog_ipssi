@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class ArticleType extends AbstractType
 {
@@ -17,9 +18,12 @@ class ArticleType extends AbstractType
         $builder
             ->add('titre')
             ->add('contenu')
-            ->add('date_creation')
-            ->add('etat')
-            ->add('date_parution')
+            ->add('etat', ChoiceType::class, [
+                'choices' => [
+                    'Brouillon' => 'brouillon',
+                    'Publié' => 'publie',
+                ],
+            ])
             ->add('categorie', EntityType::class, [
                 'class' => Categorie::class,
                 'choice_label' => 'id',

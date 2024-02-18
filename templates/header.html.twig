@@ -11,14 +11,16 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <li><a href="{{ path('app_categorie_new') }}">Creer un categorie</a></li>
                     <li><a href="{{ path('app_article_new') }}">Creer un article</a></li>
+                    <li><a href="{{ path('app_commentaire_index') }}">Liste des commentaire</a></li>
                 {% endif %}
-                <li><a href="{{ path('app_register') }}">Creer un compte</a></li>
-                <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                <li><a href="{{ path('app_logout') }}">Deconnexion</a></li>
-
-
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <li><a href="{{ path('app_logout') }}">Deconnexion</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_register') }}">Creer un compte</a></li>
+                    <li><a href="{{ path('app_login') }}">Connexion</a></li>
+                {% endif %}
                 <li><a href="{{ path('app_article_index') }}">Liste des article</a></li>
-                <li><a href="{{ path('app_commentaire_index') }}">Liste des categorie</a></li>
+                <li><a href="{{ path('app_categorie_index') }}">Liste des categorie</a></li>
             </ul>
         </nav>
     </header>

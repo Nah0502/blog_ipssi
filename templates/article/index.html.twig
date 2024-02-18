@@ -14,7 +14,11 @@
                 <th>Date_creation</th>
                 <th>Etat</th>
                 <th>Date_parution</th>
+                <th>lien</th>
+
+                {% if is_granted('ROLE_ADMIN') %}
                 <th>actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -26,11 +30,16 @@
                 <td>{{ article.dateCreation ? article.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ article.etat }}</td>
                 <td>{{ article.dateParution ? article.dateParution|date('Y-m-d H:i:s') : '' }}</td>
+                <td><a href="{{ path('app_article_show', {'id': article.id}) }}">show</a></td>
                 {% if is_granted('ROLE_ADMIN') %}
                 <td>
-                    <a href="{{ path('app_article_show', {'id': article.id}) }}">show</a>
                     <a href="{{ path('app_article_edit', {'id': article.id}) }}">edit</a>
+                    {{ include('article/_delete_form.html.twig') }}
+                    {% if article.etat == "brouillon" %}
+                        {{ include('article/_publier_form.html.twig') }}
+                    {% endif %}
                 </td>
+                        
                 {% endif %}
             </tr>
         {% else %}
@@ -41,5 +50,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_article_new') }}">Create new</a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_article_new') }}">Create new Ar</a>
+    {% endif %}
 {% endblock %}

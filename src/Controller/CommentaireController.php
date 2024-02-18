@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Commentaire;
+use App\Entity\Article;
 use App\Form\CommentaireType;
 use App\Repository\CommentaireRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Security;
 
 #[Route('/commentaire')]
 class CommentaireController extends AbstractController
@@ -22,25 +24,49 @@ class CommentaireController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_commentaire_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    private $security;
+
+    public function __construct(Security $security)
     {
-        $commentaire = new Commentaire();
-        $form = $this->createForm(CommentaireType::class, $commentaire);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($commentaire);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_commentaire_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('commentaire/new.html.twig', [
-            'commentaire' => $commentaire,
-            'form' => $form,
-        ]);
+        $this->security = $security;
     }
+
+    
+        
+        #[Route('/new/{id_article}', name: 'app_commentaire_new', methods: ['GET', 'POST'])]
+        public function new(Request $request, EntityManagerInterface $entityManager, int $id_article): Response
+        {
+            $article = $entityManager->getRepository(Article::class)->find($id_article);
+
+            $commentaire = new Commentaire();
+            $commentaire->setArticle($article);
+
+            $form = $this->createForm(CommentaireType::class, $commentaire);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                if (!$this->security->getUser()) {
+                    throw $this->createAccessDeniedException('Vous devez être connecté pour commenter.');
+                }
+    
+                // Récupérer l'utilisateur connecté
+                $user = $this->security->getUser();
+                // Associer l'ID de l'utilisateur au commentaire
+                $commentaire->setAuteur($user);
+    
+                $commentaire->setEtat("active");
+                $commentaire->setDatePublication(new \DateTime());
+                $entityManager->persist($commentaire);
+                $entityManager->flush();
+    
+                return $this->redirectToRoute('app_commentaire_index', [], Response::HTTP_SEE_OTHER);
+            }
+
+            return $this->render('commentaire/new.html.twig', [
+                'commentaire' => $commentaire,
+                'form' => $form->createView(),
+            ]);
+        }
 
     #[Route('/{id}', name: 'app_commentaire_show', methods: ['GET'])]
     public function show(Commentaire $commentaire): Response

@@ -25,11 +25,15 @@ class ArticleController extends AbstractController
     #[Route('/new', name: 'app_article_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+
+        
         $article = new Article();
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $article->setEtat("brouillion");
+            $article->setDateCreation(new \DateTime());
             $entityManager->persist($article);
             $entityManager->flush();
 
@@ -51,7 +55,7 @@ class ArticleController extends AbstractController
             'article' => $article,
         ]);
     }
-
+    
     #[Route('/{id}/edit', name: 'app_article_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Article $article, EntityManagerInterface $entityManager): Response
     {
@@ -75,6 +79,17 @@ class ArticleController extends AbstractController
     {
         if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
             $entityManager->remove($article);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
+    }
+    #[Route('/{id}/publier', name: 'app_article_publier', methods: ['POST'])]
+    public function publier(Request $request, Article $article, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('publier'.$article->getId(), $request->request->get('_token'))) {
+            $article->setDateParution(new \DateTime());
+            $article->setEtat("publie");
             $entityManager->flush();
         }
 

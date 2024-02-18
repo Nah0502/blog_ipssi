@@ -1,0 +1,4 @@
+<form action="{{ path('app_article_publier', {'id': article.id}) }}" method="post" onsubmit="return confirm('Voulez-vous vraiment publier cet article ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('publier' ~ article.id) }}">
+    <button type="submit" class="btn btn-success">Publier</button>
+</form>
